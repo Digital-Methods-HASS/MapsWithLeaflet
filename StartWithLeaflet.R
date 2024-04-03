@@ -1,64 +1,77 @@
 ###   GETTING STARTED WITH LEAFLET
 
-# Try to work through down this script, observing what happens in the plotting pane.
+# Try to work through down this script, observing what happens in the plotting pane. There are three
+# initial example exercises, followed by ...
 
 # Review favorite backgrounds in:
 # https://leaflet-extras.github.io/leaflet-providers/preview/
 # beware that some need extra options specified
 
 # To install Leaflet package, run this command at your R prompt:
-install.packages("leaflet")
+#install.packages("leaflet")
+#install.packages("htmlwidget")
 
-# We will also need this widget to make pretty maps:
-install.packages("htmlwidget")
-
-# Activate the libraries
+# Activate the library
 library(leaflet)
-library(htmlwidgets)
+library(htmlwidgets) # not essential, only needed for saving the map as .html
 
+########## Example 1: create a Leaflet map of Europe with addAwesomeMarkers() 
 
-########## Example with Markers on a map of Europe
-
+# Learn to create a map by plotting three point markers, called Robin, Jakub and Jannes.
 
 # First, create labels for your points
 popup = c("Robin", "Jakub", "Jannes")
 
-# You create a Leaflet map with these basic steps: you need to run the whole chain of course
-leaflet() %>%                                 # create a map widget by calling the library
-  addProviderTiles("Esri.WorldPhysical") %>%  # add Esri World Physical map tiles
-  addAwesomeMarkers(lng = c(-3, 23, 11),      # add layers, specified with longitude for 3 points
-                    lat = c(52, 53, 49),      # and latitude for 3 points
-                    popup = popup)            # specify labels, which will appear if you click on the point in the map
+# Next, you create a Leaflet map with these basic steps: 
+# call the leaflet() function and pipe in some background maps ("tiles"), 
+# and then addMarker() function with longitude and latitude.
+# Run the pipeline below to see the result:
+leaflet() %>%                                 # create a map widget by calling the leaflet library
+  addProviderTiles("Esri.WorldPhysical") %>%  # add Esri World Physical map tiles explicitly
+  addAwesomeMarkers(lng = c(-3, 23, 11),      # add point markers specified with longitude for 3 points
+                    lat = c(52, 53, 49),      # and latitude for 3 points (coordinates fall in EU)
+                    popup = popup)            # specify labels for points, which will appear if you click on the point in the map
 
+########### Example 2: create a Leaflet map of Sydney with the setView() function 
 
-### Let's look at Sydney with setView() function in Leaflet
+# Note that there are no points or markers below, just background tiles. setView() function
+# alone helps you focus and zoom the map in a particular area of the world.
+
+# Now we are in Sydney
 leaflet() %>%
   addTiles() %>%                              # add default OpenStreetMap map tiles
   addProviderTiles("Esri.WorldImagery",       # add custom Esri World Physical map tiles
                    options = providerTileOptions(opacity=0.5)) %>%     # make the Esri tile transparent
   setView(lng = 151.005006, lat = -33.9767231, zoom = 10)              # set the location of the map 
+# Question 1: What is the order of longitude and latitude in the setView() function?
 
+# Now let's go back to Europe again
+# When the map defined below renders, click the box in top right corner
+# in your map Viewer to select between different background layers
 
-# Now let's refocus on Europe again
 leaflet() %>% 
   addTiles() %>% 
   setView( lng = 2.34, lat = 48.85, zoom = 5 ) %>%  # let's use setView to navigate to our area
-  addProviderTiles("Esri.WorldPhysical", group = "Physical") %>% 
-  addProviderTiles("Esri.WorldImagery", group = "Aerial") %>% 
-  addProviderTiles("MtbMap", group = "Geo") %>% 
-
+  addProviderTiles("Esri.WorldPhysical", group = "Physical") %>%  # add physical background
+  addProviderTiles("Esri.WorldImagery", group = "Aerial") %>%  # add satellite image
+  addProviderTiles("MtbMap", group = "Geo") %>%               # add geomorphic units map
+    
 addLayersControl(                                 # we are adding layers control to the maps
   baseGroups = c("Geo","Aerial", "Physical"),
-  options = layersControlOptions(collapsed = T))
+  options = layersControlOptions(collapsed = T))  # replace T with F and back and run it
 
-# click the box in topright corner in your Viewer 
-# to select between different background layers
+# Question 2: How does the map above change if you replace the T 
+# in the last line of code above with F?
 
 
-########## SYDNEY HARBOUR DISPLAY WITH LAYERS
-# Let's create a more complicated map 
 
-# Set the location and zoom level
+########### Example 3:  SYDNEY HARBOUR DISPLAY WITH 11 LAYERS
+
+# Let's create a map with more background layers that allows
+# interactive selection between multiple layers. This can be useful
+# if you want to rendering historical maps illustrating change over time
+
+# The chunk below sets the location and zoom level of your map
 leaflet() %>% 
   setView(151.2339084, -33.85089, zoom = 13) %>%
   addTiles()  # checking I am in the right area
@@ -66,11 +79,11 @@ leaflet() %>%
 
 # Bring in a choice of esri background layers  
 
-# Create a basic basemap
+# Create a basic base map
 l_aus <- leaflet() %>%   # assign the base location to an object
   setView(151.2339084, -33.85089, zoom = 13)
 
-# Now, prepare to select backgrounds
+# Now, prepare to select backgrounds by grabbing their names
 esri <- grep("^Esri", providers, value = TRUE)
 
 # Select backgrounds from among provider tiles. To view them the options, 
@@ -111,20 +124,23 @@ AUSmap
 # Save map as a html document (optional, replacement of pushing the export button)
 # only works in root
 
+# We will also need this widget to make pretty maps:
+
 saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 
-###################################  YOUR TASK NUMBER ONE
+########################################  YOUR TASK NUMBER ONE
 
 
-# Task 1: Create a Danish equivalent of AUSmap with esri layers, 
-# but call it DANmap
+# Task 1: Create a Danish equivalent of AUSmap with Esri layers, 
+# but call it DANmap. You will need it layer as a background for Danish data points.
 
 
 
-########## ADD DATA TO LEAFLET
+######################################## ADD DATA TO LEAFLET
 
+# Before you can proceed to Task 2, you need to learn about coordinate creation. 
 # In this section you will manually create machine-readable spatial
-# data from GoogleMaps: 
+# data from GoogleMaps, load these into R, and display them in Leaflet with addMarkers(): 
 
 ### First, go to https://bit.ly/CreateCoordinates1
 ### Enter the coordinates of your favorite leisure places in Denmark 
@@ -134,36 +150,64 @@ saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 # Caveats: Do NOT edit the grey columns! They populate automatically!
 
 ### Second, read the sheet into R. You will need gmail login information. 
-      # watch the console, it may ask you to authenticate or put in the number 
-      # that corresponds to the account you wish to use.
+  # IMPORTANT: watch the console, it may ask you to authenticate or put in the number 
+  # that corresponds to the account you wish to use.
 
 # Libraries
 library(tidyverse)
 library(googlesheets4)
 library(leaflet)
 
-# Read in a Google sheet
-places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=124710918",
-                     col_types = "cccnncnc")
-glimpse(places)
+# If you experience difficulty with your read_sheet() function (it is erroring out), 
+# uncomment and run the following function:
+# gs4_deauth()  # run this line and then rerun the read_sheet() function below
 
-# load the coordinates in the map and check: are any points missing? Why?
+# Read in the Google sheet you've edited
+places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=124710918",
+                     col_types = "cccnncnc",   # check that you have the right number and type of columns
+                     range = "DM2022")  # select the correct worksheet name
+
+glimpse(places)  
+# Question 3: are the Latitude and Longitude columns present? 
+# Do they contain numeric decimal degrees?
+
+
+
+# If your coordinates look good, see how you can use addMarkers() function to
+# load them in a basic map. Run the lines below and check: are any points missing? Why?
 leaflet() %>% 
   addTiles() %>% 
   addMarkers(lng = places$Longitude, 
              lat = places$Latitude,
-             popup = places$Description)
+             popup = paste(places$Description, "<br>", places$Type))
+# Now that you have learned how to load points from a googlesheet to a basic leaflet map, 
+# apply the know-how to YOUR DANmap object. 
 
-#########################################################
+######################################################### TASK TWO
 
 
 # Task 2: Read in the googlesheet data you and your colleagues 
-# populated with data into the DANmap object you created in Task 1.
+# populated with data into your DANmap object with 11 background layers you created in Task 1.
 
-# Task 3: Can you cluster the points in Leaflet? Google "clustering options in Leaflet"
+# Solution
 
-# Task 4: Look at the map and consider what it is good for and what not.
+######################################################### TASK THREE
 
-# Task 5: Find out how to display notes and classifications in the map.
+# Task 3: Can you cluster the points in Leaflet? Google "clustering options in Leaflet in R"
 
+# Solution
+
+######################################################## TASK FOUR
+
+# Task 4: Look at the two maps (with and without clustering) and consider what
+# each is good for and what not.
+
+# Your answer
+
+######################################################## TASK FIVE
+
+# Task 5: Find out how to display the notes and classifications column in the map. Check 
+# online help in sites such as https://r-charts.com/spatial/interactive-maps-leaflet/#popup
+
+# Solution
 
