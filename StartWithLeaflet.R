@@ -1,7 +1,7 @@
 ###   GETTING STARTED WITH LEAFLET
 
 # Try to work through down this script, observing what happens in the plotting pane. There are three
-# initial example exercises, followed by ...
+# initial example exercises, followed by a few questions and 5 tasks. 
 
 # Review favorite backgrounds in:
 # https://leaflet-extras.github.io/leaflet-providers/preview/
@@ -77,7 +77,7 @@ leaflet() %>%
   addTiles()  # checking I am in the right area
 
 
-# Bring in a choice of esri background layers  
+# Bring in a choice of Esri background layers  
 
 # Create a basic base map
 l_aus <- leaflet() %>%   # assign the base location to an object
@@ -86,13 +86,14 @@ l_aus <- leaflet() %>%   # assign the base location to an object
 # Now, prepare to select backgrounds by grabbing their names
 esri <- grep("^Esri", providers, value = TRUE)
 
-# Select backgrounds from among provider tiles. To view them the options, 
+# Select backgrounds from among provider tiles. To view the options, 
 # go to https://leaflet-extras.github.io/leaflet-providers/preview/
+# Run the following three lines together!
 for (provider in esri) {
   l_aus <- l_aus %>% addProviderTiles(provider, group = provider)
 }
 
-### Map of Sydney, NSW, Australia
+# Map of Sydney, NSW, Australia
 # We make a layered map out of the components above and write it to 
 # an object called AUSmap
 AUSmap <- l_aus %>%
@@ -128,14 +129,14 @@ AUSmap
 
 saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 
-########################################  YOUR TASK NUMBER ONE
+########################################  TASK NUMBER ONE
 
 
 # Task 1: Create a Danish equivalent of AUSmap with Esri layers, 
 # but call it DANmap. You will need it layer as a background for Danish data points.
 
 
-
+########################################
 ######################################## ADD DATA TO LEAFLET
 
 # Before you can proceed to Task 2, you need to learn about coordinate creation. 
@@ -165,7 +166,7 @@ library(leaflet)
 # Read in the Google sheet you've edited
 places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=124710918",
                      col_types = "cccnncnc",   # check that you have the right number and type of columns
-                     range = "DM2022")  # select the correct worksheet name
+                     range = "DM2023")  # select the correct worksheet name
 
 glimpse(places)  
 # Question 3: are the Latitude and Longitude columns present? 
@@ -183,31 +184,35 @@ leaflet() %>%
 # Now that you have learned how to load points from a googlesheet to a basic leaflet map, 
 # apply the know-how to YOUR DANmap object. 
 
-######################################################### TASK TWO
+########################################
+######################################## TASK TWO
 
 
-# Task 2: Read in the googlesheet data you and your colleagues 
-# populated with data into your DANmap object with 11 background layers you created in Task 1.
-
-# Solution
-
-######################################################### TASK THREE
-
-# Task 3: Can you cluster the points in Leaflet? Google "clustering options in Leaflet in R"
+# Task 2: Read in the googlesheet data you and your colleagues created
+# into your DANmap object (with 11 background layers you created in Task 1).
 
 # Solution
 
-######################################################## TASK FOUR
+######################################## TASK THREE
+
+# Task 3: Can you cluster the points in Leaflet?
+# Hint: Google "clustering options in Leaflet in R"
+
+# Solution
+
+######################################## TASK FOUR
 
 # Task 4: Look at the two maps (with and without clustering) and consider what
 # each is good for and what not.
 
-# Your answer
+# Your brief answer
 
-######################################################## TASK FIVE
+######################################## TASK FIVE
 
-# Task 5: Find out how to display the notes and classifications column in the map. Check 
-# online help in sites such as https://r-charts.com/spatial/interactive-maps-leaflet/#popup
+# Task 5: Find out how to display the notes and classifications column in the map. 
+# Hint: Check online help in sites such as 
+# https://r-charts.com/spatial/interactive-maps-leaflet/#popup
 
 # Solution
 
+######################################## CONGRATULATIONS - YOUR ARE DONE :)
