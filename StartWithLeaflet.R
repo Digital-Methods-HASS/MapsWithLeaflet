@@ -8,12 +8,20 @@
 # beware that some need extra options specified
 
 # To install Leaflet package, run this command at your R prompt:
-#install.packages("leaflet")
-#install.packages("htmlwidget")
+install.packages("leaflet")
+
+# To be able to save your map, uncomment and install one of these packages. 
+# If htmlwidget does not work, consider installing "htmltools" instead.
+#install.packages("htmlwidget") 
+#install.packages("htmltools")
+
 
 # Activate the library
 library(leaflet)
-library(htmlwidgets) # not essential, only needed for saving the map as .html
+# uncomment and activate whichever one worked for you to install
+# only needed for saving the map as .html
+#library(htmltools)
+#library(htmlwidgets) 
 
 ########## Example 1: create a Leaflet map of Europe with addAwesomeMarkers() 
 
@@ -42,7 +50,7 @@ leaflet() %>%
   addTiles() %>%                              # add default OpenStreetMap map tiles
   addProviderTiles("Esri.WorldImagery",       # add custom Esri World Physical map tiles
                    options = providerTileOptions(opacity=0.5)) %>%     # make the Esri tile transparent
-  setView(lng = 151.005006, lat = -33.9767231, zoom = 10)              # set the location of the map 
+  setView(lng = 151.105006, lat = -33.8767231, zoom = 12)              # set the location of the map 
 # Question 1: What is the order of longitude and latitude in the setView() function?
 
 # Now let's go back to Europe again
@@ -58,7 +66,7 @@ leaflet() %>%
     
 addLayersControl(                                 # we are adding layers control to the maps
   baseGroups = c("Geo","Aerial", "Physical"),
-  options = layersControlOptions(collapsed = T))  # replace T with F and back and run it
+  options = layersControlOptions(collapsed = F))  # replace T with F and back and run it
 
 # Question 2: How does the map above change if you replace the T 
 # in the last line of code above with F?
@@ -82,9 +90,11 @@ leaflet() %>%
 # Create a basic base map
 l_aus <- leaflet() %>%   # assign the base location to an object
   setView(151.2339084, -33.85089, zoom = 13)
+l_aus
 
 # Now, prepare to select backgrounds by grabbing their names
 esri <- grep("^Esri", providers, value = TRUE)
+esri
 
 # Select backgrounds from among provider tiles. To view the options, 
 # go to https://leaflet-extras.github.io/leaflet-providers/preview/
@@ -92,6 +102,8 @@ esri <- grep("^Esri", providers, value = TRUE)
 for (provider in esri) {
   l_aus <- l_aus %>% addProviderTiles(provider, group = provider)
 }
+
+l_aus
 
 # Map of Sydney, NSW, Australia
 # We make a layered map out of the components above and write it to 
@@ -125,8 +137,8 @@ AUSmap
 # Save map as a html document (optional, replacement of pushing the export button)
 # only works in root
 
-# We will also need this widget to make pretty maps:
-
+# You will need an html library to save pretty maps:
+# library(htmlwidgets)
 saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 
 ########################################  TASK NUMBER ONE
@@ -135,6 +147,10 @@ saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 # Task 1: Create a Danish equivalent of AUSmap with Esri layers, 
 # but call it DANmap. You will need it layer as a background for Danish data points.
 
+leaflet() %>%   # assign the base location to an object
+  setView( 10.85089,55.2339084, zoom = 13) %>% 
+  addTiles()
+l_dk
 
 ########################################
 ######################################## ADD DATA TO LEAFLET
@@ -155,20 +171,26 @@ saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
   # that corresponds to the account you wish to use.
 
 # Libraries
+install.packages("googlesheets4")
 library(tidyverse)
 library(googlesheets4)
 library(leaflet)
 
 # If you experience difficulty with your read_sheet() function (it is erroring out), 
 # uncomment and run the following function:
-# gs4_deauth()  # run this line and then rerun the read_sheet() function below
+gs4_deauth()  # run this line and then rerun the read_sheet() function below
 
 # Read in the Google sheet you've edited
 places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=124710918",
                      col_types = "cccnncnc",   # check that you have the right number and type of columns
-                     range = "DM2023")  # select the correct worksheet name
+                     range = "DAM2025")  # select the correct worksheet name
 
-glimpse(places)  
+glimpse(places)
+
+places %>% 
+  filter(!is.na(Longitude)) %>% 
+  filter(!is.na(Latitude))
+
 # Question 3: are the Latitude and Longitude columns present? 
 # Do they contain numeric decimal degrees?
 
@@ -176,8 +198,14 @@ glimpse(places)
 
 # If your coordinates look good, see how you can use addMarkers() function to
 # load them in a basic map. Run the lines below and check: are any points missing? Why?
-leaflet() %>% 
+studentmap<- leaflet() %>% 
   addTiles() %>% 
+  addMarkers(lng = places$Longitude, 
+             lat = places$Latitude,
+             popup = paste(places$Description, "<br>", places$Type))
+saveWidget(studentmap, "studentmap.html", selfcontained = T)
+
+DKmap %>% 
   addMarkers(lng = places$Longitude, 
              lat = places$Latitude,
              popup = paste(places$Description, "<br>", places$Type))
@@ -189,7 +217,7 @@ leaflet() %>%
 
 
 # Task 2: Read in the googlesheet data you and your colleagues created
-# into your DANmap object (with 11 background layers you created in Task 1).
+# into your DANmap object (with multiple background layers you created in Task 1).
 
 # Solution
 
@@ -215,4 +243,4 @@ leaflet() %>%
 
 # Solution
 
-######################################## CONGRATULATIONS - YOUR ARE DONE :)
+######################################## CONGRATULATIONS - YOU ARE DONE :)
