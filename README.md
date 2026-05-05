@@ -4,3 +4,7 @@ Leaflet is a popular library for creating interactive maps. The StartWithLeaflet
 
 Leaflet has excellent documentation at https://rstudio.github.io/leaflet/ 
 
+# License
+Creative Commons Attribution 4.0 International
+This license requires that reusers give credit to the creator. It allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, even for commercial purposes.
+
